@@ -1,4 +1,4 @@
-import { mockNintexAdapter } from "./mockAdapter";
+import { mockNintexAdapter } from "../mock/mockAdapter";
 import { fetchTripsFromNintex, updateTripField } from "./nintexAdapter";
 
 // Detect if running inside Nintex

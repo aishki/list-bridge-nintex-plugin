@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 //import { fetchTripsFromNintex, updateTripField } from "../nintexAdapter";
-import { dataAdapter } from "../dataAdapter";
+import { dataAdapter } from "../adapters/dataAdapter";
 
 // Required for react-modal accessibility
 Modal.setAppElement("#root");
