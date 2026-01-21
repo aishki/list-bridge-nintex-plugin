@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
-//import { fetchTripsFromNintex, updateTripField } from "../nintexAdapter";
-import { dataAdapter } from "../adapters/dataAdapter";
+import { fetchTrips, pickUpTrip, dropOffTrip } from "../adapters/dataAdapter";
 
 // Required for react-modal accessibility
 Modal.setAppElement("#root");
@@ -12,27 +11,21 @@ export default function DriverTrips({ driverId }) {
   const [showModal, setShowModal] = useState(false);
 
   /**
-   * LOAD TRIPS ASSIGNED TO THIS DRIVER
-   * Re-runs if QR driverId changes
+   * Load trips when driverId changes (QR scan)
    */
-  // useEffect(() => {
-  //   async function loadTrips() {
-  //     const data = await fetchTripsFromNintex(driverId);
-  //     setTrips(data);
-  //   }
-  //   loadTrips();
-  // }, [driverId]);
-
   useEffect(() => {
+    if (!driverId) return;
+
     async function loadTrips() {
-      const data = await dataAdapter.getTripsForDriver(driverId);
+      const data = await fetchTrips(driverId);
       setTrips(data);
     }
+
     loadTrips();
   }, [driverId]);
 
   /**
-   * Trigger confirmation modal
+   * Open confirmation modal
    */
   const handlePickUpClick = (trip) => {
     setSelectedTrip(trip);
@@ -40,27 +33,10 @@ export default function DriverTrips({ driverId }) {
   };
 
   /**
-   * CONFIRM PICK UP
-   * Updates SharePoint PickUpDate column
+   * Confirm Pick Up
    */
-  // const confirmPickUp = async () => {
-  //   await updateTripField(
-  //     selectedTrip.id,
-  //     "PickUpDate", // 🔁 SharePoint INTERNAL column name
-  //     new Date().toISOString(),
-  //   );
-
-  //   setTrips((prev) =>
-  //     prev.map((t) =>
-  //       t.id === selectedTrip.id ? { ...t, pickedUp: true } : t,
-  //     ),
-  //   );
-
-  //   setShowModal(false);
-  // };
-
   const confirmPickUp = async () => {
-    await dataAdapter.pickUpTrip(selectedTrip.id);
+    await pickUpTrip(selectedTrip.id);
 
     setTrips((prev) =>
       prev.map((t) =>
@@ -72,22 +48,10 @@ export default function DriverTrips({ driverId }) {
   };
 
   /**
-   * DROP OFF
-   * Updates DropOffDate and removes trip from UI
+   * Drop Off
    */
-  // const handleDropOff = async (trip) => {
-  //   await updateTripField(
-  //     trip.id,
-  //     "DropOffDate", // SharePoint INTERNAL column name
-  //     new Date().toISOString(),
-  //   );
-
-  //   setTrips((prev) => prev.filter((t) => t.id !== trip.id));
-  //   setSelectedTrip(null);
-  // };
-
   const handleDropOff = async (trip) => {
-    await dataAdapter.dropOffTrip(trip.id);
+    await dropOffTrip(trip.id);
 
     setTrips((prev) => prev.filter((t) => t.id !== trip.id));
     setSelectedTrip(null);
@@ -95,16 +59,13 @@ export default function DriverTrips({ driverId }) {
 
   return (
     <div>
-      {/* DRIVER HEADER */}
-      <div style={{ marginBottom: 16 }}>
-        <h2>Assigned Trips</h2>
-        <p>Driver ID: {driverId}</p>
-        <p>Trips found: {trips.length}</p>
-      </div>
+      <h2>Assigned Trips</h2>
+      <p>Driver ID: {driverId}</p>
+      <p>Trips found: {trips.length}</p>
 
       {/* SINGLE TRIP VIEW */}
       {selectedTrip ? (
-        <div className="trip-detail">
+        <div>
           <button onClick={() => setSelectedTrip(null)}>✕ Back</button>
 
           <h3>
@@ -125,11 +86,10 @@ export default function DriverTrips({ driverId }) {
         </div>
       ) : (
         /* LIST VIEW */
-        <div className="trip-list">
+        <div>
           {trips.map((trip) => (
             <div
               key={trip.id}
-              className="trip-card"
               onClick={() => setSelectedTrip(trip)}
               style={{
                 border: "1px solid #ccc",
@@ -169,17 +129,8 @@ export default function DriverTrips({ driverId }) {
         </div>
       )}
 
-      {/* CONFIRMATION MODAL */}
-      <Modal
-        isOpen={showModal}
-        onRequestClose={() => setShowModal(false)}
-        style={{
-          content: {
-            maxWidth: 400,
-            margin: "auto",
-          },
-        }}
-      >
+      {/* CONFIRM MODAL */}
+      <Modal isOpen={showModal} onRequestClose={() => setShowModal(false)}>
         <h3>Confirm Pick Up</h3>
         <p>
           {selectedTrip?.from} → {selectedTrip?.to}
