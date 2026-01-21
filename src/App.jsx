@@ -1,35 +1,29 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import DriverTrips from "./components/DriverTrips";
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  /**
+   * QR CODE FLOW
+   * Example QR URL:
+   * https://company-site/nintex/van?driverId=D123
+   *
+   * driverId is NOT a domain account
+   * This is a logical identifier stored in SharePoint
+   */
+  const params = new URLSearchParams(window.location.search);
+  const driverId = params.get("driverId");
+
+  if (!driverId) {
+    return (
+      <div style={{ padding: 20 }}>
+        <h2>No Driver ID found</h2>
+        <p>Please scan your assigned QR code.</p>
+      </div>
+    );
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div style={{ padding: 16 }}>
+      <DriverTrips driverId={driverId} />
+    </div>
+  );
 }
-
-export default App
