@@ -36,3 +36,36 @@ export const dataAdapter = {
     return updateTripField(tripId, "DropOffDate", timestamp);
   },
 };
+
+// For Nintex Use Only
+// import { fetchTripsFromNintex, updateTripField } from "./nintexAdapter";
+// import { mockNintexAdapter } from "../mock/mockAdapter";
+
+// const USE_MOCK = import.meta.env.VITE_USE_MOCK === "true";
+
+// export async function fetchTrips(driverId) {
+//   if (USE_MOCK) {
+//     return mockNintexAdapter.getTripsForDriver(driverId);
+//   }
+//   return fetchTripsFromNintex(driverId);
+// }
+
+// export async function pickUpTrip(tripId) {
+//   const timestamp = new Date().toISOString();
+
+//   if (USE_MOCK) {
+//     return mockNintexAdapter.updatePickUp(tripId, timestamp);
+//   }
+
+//   return updateTripField(tripId, "PickUpDate", timestamp);
+// }
+
+// export async function dropOffTrip(tripId) {
+//   const timestamp = new Date().toISOString();
+
+//   if (USE_MOCK) {
+//     return mockNintexAdapter.updateDropOff(tripId, timestamp);
+//   }
+
+//   return updateTripField(tripId, "DropOffDate", timestamp);
+// }
